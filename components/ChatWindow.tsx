@@ -18,8 +18,8 @@ const ChatWindow: React.FC = () => {
   const [lastSelectedId, setLastSelectedId] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Função centralizada para gerar o estado inicial (Menu Principal)
-  const resetToMainMenu = (name: string) => {
+  // Função para resetar a conversa para o estado inicial (Menu Principal)
+  const startConversation = (name: string) => {
     const hour = new Date().getHours();
     let greeting = "Bom dia";
     if (hour >= 12 && hour < 18) greeting = "Boa tarde";
@@ -50,7 +50,7 @@ const ChatWindow: React.FC = () => {
     const name = params.get('name') || params.get('n') || '';
     setUserName(name);
     setFormName(name);
-    resetToMainMenu(name);
+    startConversation(name);
   }, []);
 
   useEffect(() => {
@@ -79,6 +79,20 @@ const ChatWindow: React.FC = () => {
     setLastSelectedId(id);
     const selected = MENU_OPTIONS.find(opt => opt.id === id);
     if (!selected) return;
+
+    // Se for a opção 8, abre a loja e já avisa no chat
+    if (id === 8) {
+      window.open('https://izabelperfumaria.com.br/', '_blank');
+      const botResponse: ChatMessage = {
+        id: 'bot-' + Date.now(),
+        type: MessageType.BOT,
+        content: "Estou abrindo nossa loja virtual oficial para você em uma nova guia. Boas compras! 🛍️✨",
+        timestamp: new Date(),
+        metadata: { originalMenuId: id, showBackButton: true }
+      };
+      setMessages(prev => [...prev, botResponse]);
+      return;
+    }
 
     const userMsg: ChatMessage = {
       id: 'user-' + Date.now(),
@@ -116,10 +130,6 @@ const ChatWindow: React.FC = () => {
         case 7:
           botContent = "Siga nossas redes sociais:";
           break;
-        case 8:
-          window.open('https://izabelperfumaria.com.br/', '_blank');
-          botContent = "Estou abrindo nossa loja virtual oficial para você em uma nova guia. Boas compras! 🛍️✨";
-          break;
       }
 
       const botResponse: ChatMessage = {
@@ -135,9 +145,8 @@ const ChatWindow: React.FC = () => {
   };
 
   const handleBack = () => {
-    // Ao clicar em voltar, limpamos tudo e voltamos ao estado inicial
-    // Isso evita "várias instâncias" da conversa na mesma tela
-    resetToMainMenu(userName);
+    // Limpa o histórico e volta ao menu principal para garantir a "instância única"
+    startConversation(userName);
   };
 
   const handleCallAction = () => {
@@ -413,7 +422,7 @@ const ChatWindow: React.FC = () => {
               </span>
             </div>
 
-            {/* BOTÃO VOLTAR - LIMPA A CONVERSA E VAI PRO MENU */}
+            {/* BOTÃO VOLTAR - LIMPA TUDO E VAI PRO MENU */}
             {msg.type !== MessageType.USER && msg.type !== MessageType.MENU && msg.metadata?.showBackButton && (
               <button
                 onClick={handleBack}
