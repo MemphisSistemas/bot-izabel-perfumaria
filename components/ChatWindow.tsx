@@ -18,8 +18,8 @@ const ChatWindow: React.FC = () => {
   const [lastSelectedId, setLastSelectedId] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Função para gerar o estado inicial da conversa (Limpando tudo)
-  const resetConversation = (name: string) => {
+  // Função para resetar a conversa (Comportamento de Instância Única)
+  const resetToMainMenu = (name: string) => {
     const hour = new Date().getHours();
     let greeting = "Bom dia";
     if (hour >= 12 && hour < 18) greeting = "Boa tarde";
@@ -50,7 +50,7 @@ const ChatWindow: React.FC = () => {
     const name = params.get('name') || params.get('n') || '';
     setUserName(name);
     setFormName(name);
-    resetConversation(name);
+    resetToMainMenu(name);
   }, []);
 
   useEffect(() => {
@@ -144,8 +144,8 @@ const ChatWindow: React.FC = () => {
   };
 
   const handleBack = () => {
-    // Ao voltar, limpamos o histórico para manter a sensação de uma única instância
-    resetConversation(userName);
+    // Ao voltar, limpamos todo o estado das mensagens e voltamos ao menu inicial
+    resetToMainMenu(userName);
   };
 
   const handleCallAction = () => {
@@ -205,7 +205,7 @@ const ChatWindow: React.FC = () => {
     const exitMsg: ChatMessage = {
       id: 'exit-' + Date.now(),
       type: MessageType.BOT,
-      content: 'Obrigado por visitar a Izabel Perfumaria!👋',
+      content: 'Obrigado por visitar a Izabel Perfumaria! 👋',
       timestamp: new Date()
     };
     setMessages(prev => [...prev, exitMsg]);
@@ -421,7 +421,7 @@ const ChatWindow: React.FC = () => {
               </span>
             </div>
 
-            {/* BOTÃO VOLTAR - LIMPA TUDO E VAI PRO MENU */}
+            {/* BOTÃO VOLTAR - LIMPA TUDO E REINICIA O MENU (SIMULA INSTÂNCIA ÚNICA) */}
             {msg.type !== MessageType.USER && msg.type !== MessageType.MENU && msg.metadata?.showBackButton && (
               <button
                 onClick={handleBack}
