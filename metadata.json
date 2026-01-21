@@ -1,0 +1,8 @@
+{
+  "name": "Izabel Perfumaria – Assistente Virtual",
+  "description": "Um chatbot informativo e elegante para atendimento automático da Izabel Perfumaria, com menu interativo e acesso para administrador.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
