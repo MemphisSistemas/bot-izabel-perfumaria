@@ -18,7 +18,8 @@ const ChatWindow: React.FC = () => {
   const [lastSelectedId, setLastSelectedId] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const getInitialMessages = (name: string): ChatMessage[] => {
+  // Função centralizada para gerar o estado inicial (Menu Principal)
+  const resetToMainMenu = (name: string) => {
     const hour = new Date().getHours();
     let greeting = "Bom dia";
     if (hour >= 12 && hour < 18) greeting = "Boa tarde";
@@ -26,20 +27,22 @@ const ChatWindow: React.FC = () => {
 
     const welcomeMsg = `Olá ${name ? name : ''}, ${greeting}! \nMeu nome é Karolina, sou a assistente virtual da Izabel Perfumaria. Estou aqui para te ajudar 😊 \n\nEscolha uma das opções abaixo no menu para se informar.`;
 
-    return [
+    const initialMessages: ChatMessage[] = [
       {
-        id: '1',
+        id: 'welcome-' + Date.now(),
         type: MessageType.BOT,
         content: welcomeMsg,
         timestamp: new Date()
       },
       {
-        id: '2',
+        id: 'menu-' + Date.now(),
         type: MessageType.MENU,
         content: 'Menu Principal',
         timestamp: new Date()
       }
     ];
+    setMessages(initialMessages);
+    setLastSelectedId(null);
   };
 
   useEffect(() => {
@@ -47,7 +50,7 @@ const ChatWindow: React.FC = () => {
     const name = params.get('name') || params.get('n') || '';
     setUserName(name);
     setFormName(name);
-    setMessages(getInitialMessages(name));
+    resetToMainMenu(name);
   }, []);
 
   useEffect(() => {
@@ -78,7 +81,7 @@ const ChatWindow: React.FC = () => {
     if (!selected) return;
 
     const userMsg: ChatMessage = {
-      id: Date.now().toString(),
+      id: 'user-' + Date.now(),
       type: MessageType.USER,
       content: selected.label,
       timestamp: new Date()
@@ -114,13 +117,13 @@ const ChatWindow: React.FC = () => {
           botContent = "Siga nossas redes sociais:";
           break;
         case 8:
-          window.open('https://izabelperfumaria.com.br/', 'loja_izabel');
-          botContent = "Estou abrindo nossa loja virtual oficial para você. Boas compras! 🛍️✨";
+          window.open('https://izabelperfumaria.com.br/', '_blank');
+          botContent = "Estou abrindo nossa loja virtual oficial para você em uma nova guia. Boas compras! 🛍️✨";
           break;
       }
 
       const botResponse: ChatMessage = {
-        id: (Date.now() + 1).toString(),
+        id: 'bot-' + Date.now(),
         type: botType,
         content: botContent,
         timestamp: new Date(),
@@ -132,10 +135,9 @@ const ChatWindow: React.FC = () => {
   };
 
   const handleBack = () => {
-    setLastSelectedId(null);
-    // Em vez de acumular mensagens infinitamente, limpamos a tela para o menu inicial
-    // para evitar a sensação de "várias instâncias" abertas na mesma conversa.
-    setMessages(getInitialMessages(userName));
+    // Ao clicar em voltar, limpamos tudo e voltamos ao estado inicial
+    // Isso evita "várias instâncias" da conversa na mesma tela
+    resetToMainMenu(userName);
   };
 
   const handleCallAction = () => {
@@ -145,7 +147,7 @@ const ChatWindow: React.FC = () => {
     window.location.href = 'tel:33984476776';
     setTimeout(() => {
       const botResponse: ChatMessage = {
-        id: Date.now().toString(),
+        id: 'form-' + Date.now(),
         type: MessageType.FORM,
         content: 'Deixe seus dados abaixo para retornarmos o contato.',
         timestamp: new Date(),
@@ -182,7 +184,7 @@ const ChatWindow: React.FC = () => {
     handleClearForm();
     
     const confirmation: ChatMessage = {
-      id: Date.now().toString(),
+      id: 'confirm-' + Date.now(),
       type: MessageType.BOT,
       content: `A Izabel Perfumaria agradece seu contato, breve entraremos em contato aguarde...`,
       timestamp: new Date(),
@@ -193,15 +195,15 @@ const ChatWindow: React.FC = () => {
 
   const handleExit = () => {
     const exitMsg: ChatMessage = {
-      id: Date.now().toString(),
+      id: 'exit-' + Date.now(),
       type: MessageType.BOT,
-      content: 'Obrigado por visitar a Izabel Perfumaria! Redirecionando para nosso WhatsApp... 👋',
+      content: 'Obrigado por visitar a Izabel Perfumaria! 👋',
       timestamp: new Date()
     };
     setMessages(prev => [...prev, exitMsg]);
     setTimeout(() => {
         window.location.href = "https://wa.me/5533984476776";
-    }, 2000);
+    }, 1500);
   };
 
   return (
@@ -411,11 +413,11 @@ const ChatWindow: React.FC = () => {
               </span>
             </div>
 
-            {/* VOLTAR Button */}
+            {/* BOTÃO VOLTAR - LIMPA A CONVERSA E VAI PRO MENU */}
             {msg.type !== MessageType.USER && msg.type !== MessageType.MENU && msg.metadata?.showBackButton && (
               <button
                 onClick={handleBack}
-                className="mt-2 flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-full text-xs font-bold shadow-md hover:bg-red-700 transition-colors self-start ml-2"
+                className="mt-2 flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-full text-xs font-bold shadow-md hover:bg-red-700 transition-colors self-start ml-2 active:scale-95"
               >
                 <RotateCcw className="w-3 h-3" />
                 Voltar ao Menu Principal
