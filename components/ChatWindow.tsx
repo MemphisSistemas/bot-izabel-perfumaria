@@ -18,8 +18,8 @@ const ChatWindow: React.FC = () => {
   const [lastSelectedId, setLastSelectedId] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Função para resetar a conversa para o estado inicial (Menu Principal)
-  const startConversation = (name: string) => {
+  // Função para gerar o estado inicial da conversa (Limpando tudo)
+  const resetConversation = (name: string) => {
     const hour = new Date().getHours();
     let greeting = "Bom dia";
     if (hour >= 12 && hour < 18) greeting = "Boa tarde";
@@ -50,7 +50,7 @@ const ChatWindow: React.FC = () => {
     const name = params.get('name') || params.get('n') || '';
     setUserName(name);
     setFormName(name);
-    startConversation(name);
+    resetConversation(name);
   }, []);
 
   useEffect(() => {
@@ -80,7 +80,6 @@ const ChatWindow: React.FC = () => {
     const selected = MENU_OPTIONS.find(opt => opt.id === id);
     if (!selected) return;
 
-    // Se for a opção 8, abre a loja e já avisa no chat
     if (id === 8) {
       window.open('https://izabelperfumaria.com.br/', '_blank');
       const botResponse: ChatMessage = {
@@ -145,8 +144,8 @@ const ChatWindow: React.FC = () => {
   };
 
   const handleBack = () => {
-    // Limpa o histórico e volta ao menu principal para garantir a "instância única"
-    startConversation(userName);
+    // Ao voltar, limpamos o histórico para manter a sensação de uma única instância
+    resetConversation(userName);
   };
 
   const handleCallAction = () => {
@@ -206,7 +205,7 @@ const ChatWindow: React.FC = () => {
     const exitMsg: ChatMessage = {
       id: 'exit-' + Date.now(),
       type: MessageType.BOT,
-      content: 'Obrigado por visitar a Izabel Perfumaria! 👋',
+      content: 'Obrigado por visitar a Izabel Perfumaria!👋',
       timestamp: new Date()
     };
     setMessages(prev => [...prev, exitMsg]);
