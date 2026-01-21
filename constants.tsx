@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Briefcase, 
@@ -10,7 +9,8 @@ import {
   Share2,
   Instagram,
   Facebook,
-  MessageCircle
+  MessageCircle,
+  ExternalLink
 } from 'lucide-react';
 
 export const COLORS = {
@@ -29,6 +29,7 @@ export const MENU_OPTIONS = [
   { id: 5, label: 'Falar com atendente', icon: <PhoneCall className="w-5 h-5 text-pink-600" /> },
   { id: 6, label: 'Horário de funcionamento', icon: <Clock className="w-5 h-5 text-pink-600" /> },
   { id: 7, label: 'Redes sociais', icon: <Share2 className="w-5 h-5 text-pink-600" /> },
+  { id: 8, label: 'Acesse nossa loja', icon: <ExternalLink className="w-5 h-5 text-pink-600" /> },
 ];
 
 export const SOCIAL_LINKS = [

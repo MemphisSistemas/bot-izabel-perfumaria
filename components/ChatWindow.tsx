@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageType, ChatMessage, AdminMessageInput } from '../types';
 import { MENU_OPTIONS, SOCIAL_LINKS, PROMO_OPTIONS } from '../constants';
@@ -19,12 +18,7 @@ const ChatWindow: React.FC = () => {
   const [lastSelectedId, setLastSelectedId] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const name = params.get('name') || params.get('n') || '';
-    setUserName(name);
-    setFormName(name);
-
+  const getInitialMessages = (name: string): ChatMessage[] => {
     const hour = new Date().getHours();
     let greeting = "Bom dia";
     if (hour >= 12 && hour < 18) greeting = "Boa tarde";
@@ -32,7 +26,7 @@ const ChatWindow: React.FC = () => {
 
     const welcomeMsg = `Olá ${name ? name : ''}, ${greeting}! \nMeu nome é Karolina, sou a assistente virtual da Izabel Perfumaria. Estou aqui para te ajudar 😊 \n\nEscolha uma das opções abaixo no menu para se informar.`;
 
-    const initialMessages: ChatMessage[] = [
+    return [
       {
         id: '1',
         type: MessageType.BOT,
@@ -46,8 +40,14 @@ const ChatWindow: React.FC = () => {
         timestamp: new Date()
       }
     ];
+  };
 
-    setMessages(initialMessages);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('name') || params.get('n') || '';
+    setUserName(name);
+    setFormName(name);
+    setMessages(getInitialMessages(name));
   }, []);
 
   useEffect(() => {
@@ -113,6 +113,10 @@ const ChatWindow: React.FC = () => {
         case 7:
           botContent = "Siga nossas redes sociais:";
           break;
+        case 8:
+          window.open('https://izabelperfumaria.com.br/', 'loja_izabel');
+          botContent = "Estou abrindo nossa loja virtual oficial para você. Boas compras! 🛍️✨";
+          break;
       }
 
       const botResponse: ChatMessage = {
@@ -129,13 +133,9 @@ const ChatWindow: React.FC = () => {
 
   const handleBack = () => {
     setLastSelectedId(null);
-    const menuMsg: ChatMessage = {
-      id: Date.now().toString(),
-      type: MessageType.MENU,
-      content: 'Menu Principal',
-      timestamp: new Date()
-    };
-    setMessages(prev => [...prev, menuMsg]);
+    // Em vez de acumular mensagens infinitamente, limpamos a tela para o menu inicial
+    // para evitar a sensação de "várias instâncias" abertas na mesma conversa.
+    setMessages(getInitialMessages(userName));
   };
 
   const handleCallAction = () => {
@@ -195,7 +195,7 @@ const ChatWindow: React.FC = () => {
     const exitMsg: ChatMessage = {
       id: Date.now().toString(),
       type: MessageType.BOT,
-      content: 'Obrigado por visitar a Izabel Perfumaria! Até a próxima. 👋',
+      content: 'Obrigado por visitar a Izabel Perfumaria! Redirecionando para nosso WhatsApp... 👋',
       timestamp: new Date()
     };
     setMessages(prev => [...prev, exitMsg]);
@@ -418,7 +418,7 @@ const ChatWindow: React.FC = () => {
                 className="mt-2 flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-full text-xs font-bold shadow-md hover:bg-red-700 transition-colors self-start ml-2"
               >
                 <RotateCcw className="w-3 h-3" />
-                Voltar
+                Voltar ao Menu Principal
               </button>
             )}
           </div>
