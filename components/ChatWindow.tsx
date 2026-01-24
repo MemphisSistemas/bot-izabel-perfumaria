@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MessageType, ChatMessage, AdminMessageInput } from '../types';
 import { MENU_OPTIONS, SOCIAL_LINKS, PROMO_OPTIONS } from '../constants';
 import { StorageService } from '../services/StorageService';
-import { ChevronRight, ExternalLink, MapPin, Send, RotateCcw, LogOut, User, Phone, Calendar, MessageSquare, Mail, Trash2 } from 'lucide-react';
+import { ChevronRight, ExternalLink, MapPin, Send, RotateCcw, LogOut, User, Phone, Calendar, MessageSquare, Mail, Trash2, FileSearch } from 'lucide-react';
 
 const ChatWindow: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -18,7 +18,6 @@ const ChatWindow: React.FC = () => {
   const [lastSelectedId, setLastSelectedId] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Função para resetar a conversa (Comportamento de Instância Única)
   const resetToMainMenu = (name: string) => {
     const hour = new Date().getHours();
     let greeting = "Bom dia";
@@ -75,6 +74,28 @@ const ChatWindow: React.FC = () => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
+  const renderContent = (content: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = content.split(urlRegex);
+    
+    return parts.map((part, i) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a 
+            key={i} 
+            href={part} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-rose-600 underline font-bold break-all hover:text-rose-800 transition-colors inline-flex items-center gap-1"
+          >
+            {part} <ExternalLink className="w-3 h-3" />
+          </a>
+        );
+      }
+      return part;
+    });
+  };
+
   const handleMenuClick = (id: number) => {
     setLastSelectedId(id);
     const selected = MENU_OPTIONS.find(opt => opt.id === id);
@@ -103,7 +124,7 @@ const ChatWindow: React.FC = () => {
     setMessages(prev => [...prev, userMsg]);
 
     setTimeout(() => {
-      let botContent: string | string[] = '';
+      let botContent: string = '';
       let botType: MessageType = MessageType.BOT;
 
       switch (id) {
@@ -117,17 +138,20 @@ const ChatWindow: React.FC = () => {
           botContent = "Acesse nossa loja virtual:\nhttps://izabelperfumaria.com.br\n\nEscolha seu produto, adicione ao carrinho e finalize sua compra utilizando: Cartão de crédito, PIX ou Boleto Bancário, com prazo de até 7 dias.";
           break;
         case 4:
-          botContent = "Selecione uma das promoções abaixo:";
+          botContent = "Confira nossos catálogos de promoções exclusivos abaixo. Clique para visualizar:";
           botType = MessageType.SUBMENU;
           break;
         case 5:
           handleCallAction();
           return;
         case 6:
-          botContent = "Nosso horário de atendimento é:\n🕘 Segunda a Domingo: \n08:00 às 00:00";
+          botContent = "Nosso horário de atendimento é:\n08:00 às 00:00\nAtendemos de Segunda a Domingo!";
           break;
         case 7:
-          botContent = "Siga nossas redes sociais:";
+          botContent = "Conecte-se conosco nas redes sociais para novidades e dicas:";
+          break;
+        case 9:
+          botContent = "Este agente foi projeto e desenvolvido pela Memphis Sistemas.\n\nDesenvolvemos Software Comerciais, Aplicativos Personalizados, Loja Virtuais, Sites pessoal ou empresarial, Agentes para whatsapp e outros, Chatbot Personalizados.\n\nFaça contato conosco:\nEmail: contatomemphissistemas@gmail.com\nSite: https://www.memphissistemas.kesug.com";
           break;
       }
 
@@ -144,7 +168,6 @@ const ChatWindow: React.FC = () => {
   };
 
   const handleBack = () => {
-    // Ao voltar, limpamos todo o estado das mensagens e voltamos ao menu inicial
     resetToMainMenu(userName);
   };
 
@@ -231,7 +254,7 @@ const ChatWindow: React.FC = () => {
             >
               {typeof msg.content === 'string' && (
                 <div className="whitespace-pre-wrap text-sm font-medium leading-relaxed">
-                  {msg.content}
+                  {renderContent(msg.content)}
                 </div>
               )}
 
@@ -269,20 +292,23 @@ const ChatWindow: React.FC = () => {
               )}
 
               {msg.type === MessageType.SUBMENU && (
-                <div className="mt-3 space-y-2">
+                <div className="mt-3 space-y-3">
                   {PROMO_OPTIONS.map((promo) => (
                     <a
                       key={promo.id}
-                      href={`./${promo.file}`}
+                      href={`/${promo.file}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full flex items-center gap-3 p-3 bg-rose-50 hover:bg-rose-100 rounded-xl text-left text-sm font-medium transition-colors border border-rose-100"
+                      className="w-full flex items-center gap-4 p-4 bg-white hover:bg-rose-50 rounded-2xl text-left transition-all border-2 border-pink-100 hover:border-pink-300 shadow-sm active:scale-[0.98]"
                     >
-                      <span className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm font-bold text-rose-600">
-                        {promo.id}
-                      </span>
-                      <span className="flex-1 text-gray-800">{promo.label}</span>
-                      <ExternalLink className="w-4 h-4 text-rose-400" />
+                      <div className="w-12 h-12 flex items-center justify-center bg-pink-100 rounded-xl text-rose-600">
+                        <FileSearch className="w-6 h-6" />
+                      </div>
+                      <div className="flex-1">
+                        <span className="block text-xs font-bold text-pink-400 uppercase tracking-wider">Catálogo 0{promo.id}</span>
+                        <span className="block text-sm font-black text-gray-800">{promo.label}</span>
+                      </div>
+                      <ExternalLink className="w-5 h-5 text-pink-300" />
                     </a>
                   ))}
                 </div>
@@ -365,9 +391,6 @@ const ChatWindow: React.FC = () => {
                           onChange={(e) => setFormEmail(e.target.value)}
                         />
                       </div>
-                      {formEmail && !validateEmail(formEmail) && (
-                        <p className="text-[9px] text-red-500 font-bold mt-1 ml-1">Por favor, insira um e-mail válido.</p>
-                      )}
                    </div>
 
                    <div className="space-y-1">
@@ -421,7 +444,6 @@ const ChatWindow: React.FC = () => {
               </span>
             </div>
 
-            {/* BOTÃO VOLTAR - LIMPA TUDO E REINICIA O MENU (SIMULA INSTÂNCIA ÚNICA) */}
             {msg.type !== MessageType.USER && msg.type !== MessageType.MENU && msg.metadata?.showBackButton && (
               <button
                 onClick={handleBack}

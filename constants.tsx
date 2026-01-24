@@ -10,7 +10,8 @@ import {
   Instagram,
   Facebook,
   MessageCircle,
-  ExternalLink
+  ExternalLink,
+  Code
 } from 'lucide-react';
 
 export const COLORS = {
@@ -30,6 +31,7 @@ export const MENU_OPTIONS = [
   { id: 6, label: 'Horário de funcionamento', icon: <Clock className="w-5 h-5 text-pink-600" /> },
   { id: 7, label: 'Redes sociais', icon: <Share2 className="w-5 h-5 text-pink-600" /> },
   { id: 8, label: 'Acesse nossa loja', icon: <ExternalLink className="w-5 h-5 text-pink-600" /> },
+  { id: 9, label: 'Desenvolvimento', icon: <Code className="w-5 h-5 text-pink-600" /> },
 ];
 
 export const SOCIAL_LINKS = [
