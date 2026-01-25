@@ -1,6 +1,6 @@
 {
   "name": "Bot Perfumaria",
-  "description": "Assistente Virtual oficial da Izabel Perfumaria hospedado em botperfumaria.workers.dev",
+  "description": "Assistente Virtual oficial da Izabel Perfumaria hospedado em ia.botperfumaria.workers.dev",
   "requestFramePermissions": [
     "camera",
     "microphone"
