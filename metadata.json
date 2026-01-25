@@ -1,6 +1,6 @@
 {
-  "name": "Bot  Izabel Perfumaria",
-  "description": "Bot  Izabel Perfumaria, Um chatbot informativo e elegante para atendimento automático da Izabel Perfumaria, com menu interativo e acesso para administrador.",
+  "name": "Bot Perfumaria",
+  "description": "Assistente Virtual oficial da Izabel Perfumaria hospedado em botperfumaria.workers.dev",
   "requestFramePermissions": [
     "camera",
     "microphone"
