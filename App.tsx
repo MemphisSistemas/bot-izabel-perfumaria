@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import ChatWindow from './components/ChatWindow';
 import AdminPanel from './components/AdminPanel';
@@ -12,6 +11,13 @@ const App: React.FC = () => {
   useEffect(() => {
     StorageService.incrementVisit();
   }, []);
+
+  // Função para abrir os PDFs da pasta Public sem erro de rota
+  const handleOpenPromotion = (promoNumber: number) => {
+    // Note que usamos "P" maiúsculo conforme seus arquivos na pasta Public
+    const fileName = `/Promocao${promoNumber}.pdf`;
+    window.open(fileName, '_blank', 'noopener,noreferrer');
+  };
 
   const profileImageUrl = "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80";
 
@@ -41,6 +47,7 @@ const App: React.FC = () => {
 
         {/* Chat Area */}
         <main className="flex-1 overflow-hidden">
+          {/* Aqui você pode passar a função handleOpenPromotion via props se o ChatWindow precisar dela */}
           <ChatWindow />
         </main>
 
@@ -74,15 +81,10 @@ const App: React.FC = () => {
                   className="w-full h-auto object-contain max-h-[80vh]" 
                 />
               </div>
-              <div className="mt-4 text-center">
-                 <p className="text-white font-bold text-xl">Karolina</p>
-                 <p className="text-pink-200 text-sm">Sua Assistente Virtual</p>
-              </div>
             </div>
           </div>
         )}
 
-        {/* Admin Overlay */}
         {isAdminOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <AdminPanel onClose={() => setIsAdminOpen(false)} />
