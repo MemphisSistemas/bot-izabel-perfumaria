@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MessageType, ChatMessage, AdminMessageInput } from '../types';
 import { MENU_OPTIONS, SOCIAL_LINKS, PROMO_OPTIONS } from '../constants';
 import { StorageService } from '../services/StorageService';
-import { ChevronRight, ExternalLink, MapPin, Send, RotateCcw, LogOut, User, Phone, Calendar, MessageSquare, Mail, Trash2, FileSearch } from 'lucide-react';
+import { ChevronRight, ExternalLink, MapPin, Send, RotateCcw, LogOut, User, Phone, Calendar, MessageSquare, Mail, Trash2, FileSearch, X } from 'lucide-react';
 
 const ChatWindow: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -16,6 +16,7 @@ const ChatWindow: React.FC = () => {
   const [formMemo, setFormMemo] = useState('');
   
   const [lastSelectedId, setLastSelectedId] = useState<number | null>(null);
+  const [selectedPromo, setSelectedPromo] = useState<typeof PROMO_OPTIONS[0] | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const resetToMainMenu = (name: string) => {
@@ -50,6 +51,9 @@ const ChatWindow: React.FC = () => {
     setUserName(name);
     setFormName(name);
     resetToMainMenu(name);
+    
+    // Record visit
+    StorageService.incrementVisit(name);
   }, []);
 
   useEffect(() => {
@@ -294,22 +298,20 @@ const ChatWindow: React.FC = () => {
               {msg.type === MessageType.SUBMENU && (
                 <div className="mt-3 space-y-3">
                   {PROMO_OPTIONS.map((promo) => (
-                    <a
+                    <button
                       key={promo.id}
-                      href={`/${promo.file}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full flex items-center gap-4 p-4 bg-white hover:bg-rose-50 rounded-2xl text-left transition-all border-2 border-pink-100 hover:border-pink-300 shadow-sm active:scale-[0.98]"
+                      onClick={() => setSelectedPromo(promo)}
+                      className="w-full flex items-center gap-4 p-4 bg-white hover:bg-rose-50 rounded-2xl text-left transition-all border-2 border-pink-100 hover:border-pink-300 shadow-sm active:scale-[0.98] group"
                     >
-                      <div className="w-12 h-12 flex items-center justify-center bg-pink-100 rounded-xl text-rose-600">
+                      <div className="w-12 h-12 flex items-center justify-center bg-pink-100 rounded-xl text-rose-600 group-hover:bg-rose-600 group-hover:text-white transition-colors">
                         <FileSearch className="w-6 h-6" />
                       </div>
                       <div className="flex-1">
                         <span className="block text-xs font-bold text-pink-400 uppercase tracking-wider">Catálogo 0{promo.id}</span>
                         <span className="block text-sm font-black text-gray-800">{promo.label}</span>
                       </div>
-                      <ExternalLink className="w-5 h-5 text-pink-300" />
-                    </a>
+                      <ExternalLink className="w-5 h-5 text-pink-300 group-hover:text-pink-600 transition-colors" />
+                    </button>
                   ))}
                 </div>
               )}
@@ -460,6 +462,72 @@ const ChatWindow: React.FC = () => {
       <div className="p-4 bg-white border-t border-pink-100 flex items-center justify-center">
          <p className="text-xs text-pink-400 font-medium italic">Assistente disponível • Atendimento Automático</p>
       </div>
+      {/* Promotion Modal */}
+      {selectedPromo && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-4xl h-[90vh] rounded-3xl overflow-hidden flex flex-col shadow-2xl animate-in zoom-in duration-300">
+            <div className="p-4 bg-gradient-to-r from-pink-500 to-rose-700 flex items-center justify-between text-white">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/20 rounded-xl">
+                  <FileSearch className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg leading-tight">{selectedPromo.label}</h3>
+                  <p className="text-pink-100 text-xs">Catálogo Oficial Izabel Perfumaria</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <a 
+                  href={`/${selectedPromo.file}?v=2`}
+                  download={selectedPromo.file}
+                  className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+                  title="Baixar PDF"
+                >
+                  <ExternalLink className="w-6 h-6" />
+                </a>
+                <button 
+                  onClick={() => setSelectedPromo(null)}
+                  className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="flex-1 bg-gray-100 relative">
+              <iframe 
+                src={`/${selectedPromo.file}?v=2#toolbar=0&navpanes=0&scrollbar=0`} 
+                className="w-full h-full border-none"
+                title={selectedPromo.label}
+              />
+              
+              {/* Fallback Message */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center pointer-events-none z-[-1]">
+                <FileSearch className="w-16 h-16 text-gray-300 mb-4" />
+                <p className="text-gray-500 font-medium">Carregando promoção...</p>
+                <p className="text-gray-400 text-sm mt-2">Se o PDF não abrir automaticamente, clique no ícone de download acima.</p>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-white border-t flex gap-3">
+              <button 
+                onClick={() => setSelectedPromo(null)}
+                className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-colors"
+              >
+                Fechar Visualização
+              </button>
+              <a 
+                href={`/${selectedPromo.file}?v=2`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-bold text-center transition-colors shadow-lg shadow-pink-200"
+              >
+                Abrir em Tela Cheia
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -16,7 +16,7 @@ export const StorageService = {
     return data ? JSON.parse(data) : [];
   },
 
-  incrementVisit: () => {
+  incrementVisit: (name?: string, origin?: string) => {
     const stats = StorageService.getStats();
     stats.day += 1;
     stats.month += 1;
@@ -24,7 +24,11 @@ export const StorageService = {
     localStorage.setItem(STATS_KEY, JSON.stringify(stats));
 
     const history = StorageService.getHistory();
-    history.push({ timestamp: new Date().toISOString() });
+    history.push({ 
+      timestamp: new Date().toISOString(),
+      name: name || 'Visitante Anônimo',
+      origin: origin || window.location.href
+    });
     localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
   },
 

@@ -41,8 +41,8 @@ export const SOCIAL_LINKS = [
 ];
 
 export const PROMO_OPTIONS = [
-  { id: 1, label: 'Super Promoção 1', file: 'Promocao1.pdf' },
-  { id: 2, label: 'Super Promoção 2', file: 'Promocao2.pdf' },
-  { id: 3, label: 'Super Promoção 3', file: 'Promocao3.pdf' },
-  { id: 4, label: 'Super Promoção 4', file: 'Promocao4.pdf' },
+  { id: 1, label: 'Super Promoção 1', file: 'promo1.pdf' },
+  { id: 2, label: 'Super Promoção 2', file: 'promo2.pdf' },
+  { id: 3, label: 'Super Promoção 3', file: 'promo3.pdf' },
+  { id: 4, label: 'Super Promoção 4', file: 'promo4.pdf' },
 ];
