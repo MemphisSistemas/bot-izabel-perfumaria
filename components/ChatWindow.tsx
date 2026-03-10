@@ -478,7 +478,7 @@ const ChatWindow: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <a 
-                  href={`/${selectedPromo.file}?v=2`}
+                  href={`${selectedPromo.file}?v=2`}
                   download={selectedPromo.file}
                   className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
                   title="Baixar PDF"
@@ -496,7 +496,7 @@ const ChatWindow: React.FC = () => {
             
             <div className="flex-1 bg-gray-100 relative">
               <iframe 
-                src={`/${selectedPromo.file}?v=2#toolbar=0&navpanes=0&scrollbar=0`} 
+                src={`${selectedPromo.file}?v=2#toolbar=0&navpanes=0&scrollbar=0`} 
                 className="w-full h-full border-none"
                 title={selectedPromo.label}
               />
@@ -517,7 +517,7 @@ const ChatWindow: React.FC = () => {
                 Fechar Visualização
               </button>
               <a 
-                href={`/${selectedPromo.file}?v=2`}
+                href={`${selectedPromo.file}?v=2`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-bold text-center transition-colors shadow-lg shadow-pink-200"
