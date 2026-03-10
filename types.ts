@@ -23,6 +23,8 @@ export interface VisitStats {
 
 export interface VisitLogEntry {
   timestamp: string;
+  name?: string;
+  origin?: string;
 }
 
 export interface AdminMessage {
