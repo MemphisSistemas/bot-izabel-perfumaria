@@ -478,7 +478,7 @@ const ChatWindow: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <a 
-                  href={`${selectedPromo.file}?v=2`}
+                  href={`/${selectedPromo.file}?v=6`}
                   download={selectedPromo.file}
                   className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
                   title="Baixar PDF"
@@ -496,16 +496,16 @@ const ChatWindow: React.FC = () => {
             
             <div className="flex-1 bg-gray-100 relative">
               <iframe 
-                src={`${selectedPromo.file}?v=2#toolbar=0&navpanes=0&scrollbar=0`} 
+                src={`/${selectedPromo.file}?v=6#toolbar=0&navpanes=0&scrollbar=0`} 
                 className="w-full h-full border-none"
                 title={selectedPromo.label}
               />
               
               {/* Fallback Message */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center pointer-events-none z-[-1]">
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center pointer-events-none -z-10">
                 <FileSearch className="w-16 h-16 text-gray-300 mb-4" />
-                <p className="text-gray-500 font-medium">Carregando promoção...</p>
-                <p className="text-gray-400 text-sm mt-2">Se o PDF não abrir automaticamente, clique no ícone de download acima.</p>
+                <p className="text-gray-500 font-medium">Visualizando promoção...</p>
+                <p className="text-gray-400 text-sm mt-2">Dica: Se a imagem não aparecer, use o botão azul lá embaixo para abrir em tela cheia.</p>
               </div>
             </div>
             
@@ -514,13 +514,13 @@ const ChatWindow: React.FC = () => {
                 onClick={() => setSelectedPromo(null)}
                 className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-colors"
               >
-                Fechar Visualização
+                Fechar
               </button>
               <a 
-                href={`${selectedPromo.file}?v=2`}
+                href={`/${selectedPromo.file}?v=6`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-bold text-center transition-colors shadow-lg shadow-pink-200"
+                className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-center transition-colors shadow-lg shadow-blue-200"
               >
                 Abrir em Tela Cheia
               </a>

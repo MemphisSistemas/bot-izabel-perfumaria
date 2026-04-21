@@ -15,6 +15,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [error, setError] = useState('');
   const [stats, setStats] = useState(StorageService.getStats());
+  const [history, setHistory] = useState(StorageService.getHistory());
+
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,10 +30,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   };
 
   const handleClearVisits = () => {
-    if (window.confirm("Deseja realmente zerar todas as contagens de visitas?")) {
-      StorageService.resetStats();
-      setStats(StorageService.getStats());
-    }
+    StorageService.resetStats();
+    setStats(StorageService.getStats());
+    setHistory([]);
+    setShowResetConfirm(false);
   };
 
   const generatePDF = (type: 'clients' | 'full' | 'visits') => {
@@ -287,13 +290,22 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
           </div>
           
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-             <button 
-               onClick={handleClearVisits}
-               className="flex items-center justify-center gap-2 p-3 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs font-bold hover:bg-red-600 hover:text-white transition-all shadow-sm"
-             >
-               <Trash2 className="w-4 h-4" />
-               Resetar
-             </button>
+             {!showResetConfirm ? (
+               <button 
+                 onClick={() => setShowResetConfirm(true)}
+                 className="flex items-center justify-center gap-2 p-3 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs font-bold hover:bg-red-600 hover:text-white transition-all shadow-sm"
+               >
+                 <Trash2 className="w-4 h-4" />
+                 Resetar
+               </button>
+             ) : (
+               <button 
+                 onClick={handleClearVisits}
+                 className="flex items-center justify-center gap-2 p-3 bg-red-600 text-white border border-red-700 rounded-xl text-xs font-black animate-pulse shadow-inner"
+               >
+                 Click p/ Confirmar
+               </button>
+             )}
              <button 
                onClick={() => generatePDF('visits')}
                className="flex items-center justify-center gap-2 p-3 bg-pink-50 text-rose-600 border border-pink-100 rounded-xl text-xs font-bold hover:bg-rose-600 hover:text-white transition-all shadow-sm"
@@ -325,10 +337,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
             Histórico de Acessos Recentes
           </h3>
           <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2">
-            {StorageService.getHistory().length === 0 ? (
+            {history.length === 0 ? (
               <p className="text-xs text-gray-400 text-center py-4">Nenhum acesso registrado.</p>
             ) : (
-              StorageService.getHistory().map((entry, idx) => (
+              history.map((entry, idx) => (
                 <div key={idx} className="bg-gray-50 p-3 rounded-xl border border-gray-100 flex justify-between items-center text-[11px]">
                   <div className="flex flex-col">
                     <span className="font-black text-gray-800 uppercase flex items-center gap-1">
