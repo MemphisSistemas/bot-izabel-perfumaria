@@ -1,0 +1,22 @@
+{
+  "name": "BotIzabelPerfumaria promocoes",
+  "short_name": "BotIzabel",
+  "description": "Assistente Virtual de Promoções - Izabel Perfumaria",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fdf2f8",
+  "theme_color": "#f472b6",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3011/3011285.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/192/3011/3011285.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
